@@ -9,7 +9,6 @@ var salt = bcrypt.genSaltSync(10);
 //     user: 'root',
 //     database: 'jwt'
 // });
-const connection = await mysql.createConnection({ host: 'localhost', user: 'root', database: 'jwt', Promise: bluebird });
 
 
 const hashPass = (password) => {
@@ -30,9 +29,17 @@ const createNewUser = (email, password, username) => {
 }
 
 const getUserList = async () => {
-    let sql = `SELECT * FROM users`;
-    let results = await connection.query(sql);
-    return results;
+const connection = await mysql.createConnection({ host: 'localhost', user: 'root', database: 'jwt', Promise: bluebird });
+
+    let users = []
+    try {
+        const [rows, fields] = await connection.execute('SELECT * FROM `users`');
+        // console.log(">>>check row", rows)
+        return rows
+    } catch (error) {
+        console.log(">>>check error", error)
+
+    }
 };
 
 module.exports = { createNewUser, getUserList }
